@@ -3,6 +3,7 @@ images/
 nbproject/
 test/
 test_fw/
+*/java~*
 
 # Compiled class file
 *.class
@@ -10,8 +11,6 @@ test_fw/
 # Log file
 *.log
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
 
 # Package Files #
 *.jar
