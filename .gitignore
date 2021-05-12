@@ -3,7 +3,7 @@ images/
 nbproject/
 test/
 test_fw/
-*/java~*
+*~
 
 # Compiled class file
 *.class
