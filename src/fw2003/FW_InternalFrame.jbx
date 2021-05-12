@@ -1,0 +1,10 @@
+[PropertyInfo]
+desk,FW_Desktop,false,false, , ,false,<default>
+h_win,int,false,false, , ,false,<default>
+l_win,int,false,false, , ,false,<default>
+pane,JComponent,false,false, , ,false,<default>
+[IconNames]
+
+
+
+
