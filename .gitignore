@@ -1,6 +1,7 @@
+build.xml
+
 build/
 images/
-nbproject/
 test/
 test_fw/
 *~
