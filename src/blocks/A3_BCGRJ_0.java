@@ -55,7 +55,7 @@ public class A3_BCGRJ_0 extends Block_Prototype_Fxy {
 ////////////////////////////////////////////////// 
     private double res(double x, double y) {
         if (y < 0) {
-            return -1;
+          y=-y*(1+params[21]*Math.sin(x*params[22]*Math.cos(x*params[23])));  //return -1;
         }
         double r = 1 - x * x*(1+y/(params[1]*50)+1);
         if (r < 0) {
