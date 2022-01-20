@@ -19,13 +19,20 @@ import java.awt.image.BufferedImage;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: </p>
+ *
  * @author Oleg Kislyuk
  * @version 3.0
  */
 public class FW_ImagePanel extends JPanel implements MouseListener,
         MouseMotionListener, KeyListener {
 
-    static final Color defaultColor = new Color(160, 158, 154);
+    public static final Color defaultColor = new Color(160, 158, 154);
+    
+    public void  dispose(){
+        if (g2img != null)
+             g2img.dispose();
+    }
+    
     Color bcgr = defaultColor;
     //int lmax =500;
     //int hmax =400;
@@ -294,6 +301,37 @@ public class FW_ImagePanel extends JPanel implements MouseListener,
         imagePaintThread = new FW_ImagePaint(icont, b, this);
         imagePaintThread.start();
         // }
+    }
+
+    public void startPaint_synchronized(FW_BlockInterface b) {
+        pressed = false;
+        //  if(imagePaintThread == null){ //Uniq Painting thread
+        int ax = (xend - x);
+        int ay = (yend - y);
+        int rr = ax * ax + ay * ay;
+        if (rr == 0) {
+            return;
+        }
+        double scl = Math.sqrt((double) rr);
+        double sn = ay / scl, cs = ax / scl;
+        //     AffineTransform hh = new AffineTransform(cs, sn, -sn, cs, 0.0, 0.0);
+        AffineTransform hh = new AffineTransform(sn, -cs, cs, sn, 0.0, 0.0);
+        g2img.setStroke(new BasicStroke(0.0f));
+        current_trans = AffineTransform.getTranslateInstance(x, y);
+        current_trans.scale(scl, scl);
+        current_trans.concatenate(hh);
+
+        g2img.setTransform(g2img_trans);
+        g2img.transform(current_trans);
+        icont = new FW_ImageContext(img, g2img, this);
+        imagePaintThread = new FW_ImagePaint(icont, b, this);
+        imagePaintThread.start();
+        try {
+            imagePaintThread.join();
+        } catch (Exception e) {
+            System.out.println(e);
+            e.printStackTrace(System.out);
+        }
     }
 
     public void stopPaint() {

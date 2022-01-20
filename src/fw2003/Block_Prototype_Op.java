@@ -9,6 +9,8 @@ package fw2003;
  * @version 3.0
  */
 
+//All operators are turned off temporary
+
 import fw2003.*;
 import java.awt.*;
 import javax.swing.*;
@@ -71,7 +73,7 @@ public class Block_Prototype_Op
     if (depth <= 0) {
       return;
     }
-    oper(ct);
+    //oper(ct);//All operators are turned off temporary
 
     if (ct.isPaintStoped()) {
       ct.repaint();

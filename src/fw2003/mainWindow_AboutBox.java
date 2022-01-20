@@ -32,9 +32,9 @@ public class mainWindow_AboutBox extends JDialog implements ActionListener {
   BorderLayout borderLayout2 = new BorderLayout();
   FlowLayout flowLayout1 = new FlowLayout();
   GridLayout gridLayout1 = new GridLayout();
-  String product = "IPF Editor ";
-  String version = "3.0";
-  String copyright = "Oleg Kislyuk(c) 2007";
+  String product = "Art of Structural Reality. Simple Editor";
+  String version = "2.1";
+  String copyright = "Oleg Kislyuk(c) 2021";
   String comments = "";
   public mainWindow_AboutBox(Frame parent) {
     super(parent);

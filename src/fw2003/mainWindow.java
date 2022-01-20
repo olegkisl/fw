@@ -43,6 +43,7 @@ public class mainWindow extends JFrame {
   JMenuItem openPallet = new JMenuItem();
   JMenu jMenu4 = new JMenu();
   JMenuItem saveImage = new JMenuItem();
+  JMenuItem saveAllImages = new JMenuItem();
   JMenuItem savePallet = new JMenuItem();
   JMenuItem blockSetOpen = new JMenuItem();
   JMenuItem jMenuItem12 = new JMenuItem();
@@ -109,6 +110,8 @@ public class mainWindow extends JFrame {
     jMenu4.setText("Save");
     saveImage.setText("Image(JPEG)");
     saveImage.addActionListener(new mainWindow_saveImage_actionAdapter(this));
+    saveAllImages.setText("BuildAndSaveImages(JPEG)");
+    saveAllImages.addActionListener(new mainWindow_saveAllImages_actionAdapter(this));
     savePallet.setText("Pallet");
     savePallet.addActionListener(new mainWindow_savePallet_actionAdapter(this));
     blockSetOpen.setText("Image Producer Factory");
@@ -207,6 +210,7 @@ public class mainWindow extends JFrame {
     jMenu3.add(openPallet);
     jMenu3.add(blockSetOpen);
     jMenu4.add(saveImage);
+    jMenu4.add(saveAllImages);
     jMenu4.add(jImagePng);
     jMenu4.add(savePallet);
     jMenu5.add(jOptions);
@@ -366,6 +370,14 @@ public class mainWindow extends JFrame {
         FW_SaveRestore.saveImageJPEG(f);
   }
 
+ void saveAllImages_actionPerformed(ActionEvent e) {
+   //FW_ImageFrame f= (FW_ImageFrame)imagesDesktop.getFocus();
+   //if(f!=null)
+       // FW_SaveRestore.saveImageJPEG(f);
+     System.out.println("Save Group of JPEG images");
+     FW_SaveRestore.SaveImagesToFolder(blockSetsDesktop);
+  }       
+               
   void jImagePng_actionPerformed(ActionEvent e) {
     FW_ImageFrame f= (FW_ImageFrame)imagesDesktop.getFocus();
        if(f!=null)
@@ -761,6 +773,17 @@ class mainWindow_saveImage_actionAdapter implements java.awt.event.ActionListene
   }
   public void actionPerformed(ActionEvent e) {
     adaptee.saveImage_actionPerformed(e);
+  }
+}
+
+class mainWindow_saveAllImages_actionAdapter implements java.awt.event.ActionListener {
+  mainWindow adaptee;
+
+  mainWindow_saveAllImages_actionAdapter(mainWindow adaptee) {
+    this.adaptee = adaptee;
+  }
+  public void actionPerformed(ActionEvent e) {
+    adaptee.saveAllImages_actionPerformed(e);
   }
 }
 

@@ -28,7 +28,7 @@ public class FW_Parm {
     return  mainWin.macroRecoder;
   }
 
-  static void init(mainWindow frame) {
+   public static void init(mainWindow frame) {
     mainWin = frame;
     builder = new FW_Builder();
     rootDir = System.getProperty("user.dir", "");
@@ -40,19 +40,19 @@ public class FW_Parm {
     System.out.println(System.getProperty("user.dir", ""));
   }
 
-  static FW_Builder getCurrentBuilder() {
+  public static FW_Builder getCurrentBuilder() {
     return builder;
   }
 
-  static FW_PalletFrame getCurrentPallet() {
+  public static FW_PalletFrame getCurrentPallet() {
     return (FW_PalletFrame) mainWin.palletsDesktop.getFocus();
   }
 
-  static FW_SetOfBlocks getCurrentSetOfBlocks() {
+  public static FW_SetOfBlocks getCurrentSetOfBlocks() {
     return (FW_SetOfBlocks) mainWin.blockSetsDesktop.getFocus();
   }
 
-  static FW_BlockInterface getCurrentBlockInterface() {
+  public static FW_BlockInterface getCurrentBlockInterface() {
     FW_BlockFrame gg =(FW_BlockFrame) mainWin.blocksDesktop.getFocus();
     if(gg==null)
       return null;
@@ -60,25 +60,25 @@ public class FW_Parm {
     //return ( (FW_BlockFrame) mainWin.blocksDesktop.getFocus()).getBlock();
   }
 
-  static FW_ImageFrame getCurrentImageFrame() {
+  public static FW_ImageFrame getCurrentImageFrame() {
     return (FW_ImageFrame)getImageDesktop().getFocus();
   }
 
 
 /////////////////////////////////////////////////////////////
-  static FW_Desktop getBlockDesktop() {
+  public static FW_Desktop getBlockDesktop() {
     return mainWin.blocksDesktop;
   }
 
-  static FW_Desktop getPalletDesktop() {
+  public static FW_Desktop getPalletDesktop() {
     return mainWin.palletsDesktop;
   }
 
-  static FW_Desktop getImageDesktop() {
+  public static FW_Desktop getImageDesktop() {
     return mainWin.imagesDesktop;
   }
 
-  static FW_Desktop getBlockSetDesktop() {
+  public static FW_Desktop getBlockSetDesktop() {
     return mainWin.blockSetsDesktop;
   }
 

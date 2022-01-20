@@ -28,6 +28,11 @@ public class FW_ImageFrame extends FW_InternalFrame{
       e.printStackTrace();
     }
   }
+  
+  // to implement at ui
+  public FW_ImageFrame(FW_Desktop d, String name) {
+    super(d, name);
+  }
 
   public FW_ImageFrame(FW_Desktop d, String name, int l,int h) {
     super(d, name);
@@ -134,6 +139,14 @@ public class FW_ImageFrame extends FW_InternalFrame{
    ip.startPaint(FW_Parm.getCurrentBlockInterface());
    ip.requestFocusInWindow();  /// new
   }
+  
+  void paint_synchronized() {
+   if(FW_Parm.getCurrentBlockInterface()==null) return;
+   //ip.save();
+   //FW_Parm.getMacroRecorder().add(ip.x,ip.y,ip.xend,ip.yend, FW_Parm.getCurrentBlockInterface());
+   ip.startPaint_synchronized(FW_Parm.getCurrentBlockInterface());
+   ip.requestFocusInWindow();  /// new
+  }
 
   void stopButton_actionPerformed(ActionEvent e) {
     ip.stopPaint();
@@ -145,7 +158,7 @@ public class FW_ImageFrame extends FW_InternalFrame{
   }
 
   void this_internalFrameClosing(InternalFrameEvent e) {
-    if(ip.g2img!=null)
+    if(ip!= null && ip.g2img!=null)
        ip.g2img.dispose();
   }
 
@@ -164,7 +177,7 @@ public class FW_ImageFrame extends FW_InternalFrame{
     }
 
     private void showScale(double s){
-        this.setTitle(title + " [Scale = "+s+"]");
+        this.setTitle(title + " [Scale = "+s+"; l = "+l+"; h = "+h+"]");
     }
 }
 
