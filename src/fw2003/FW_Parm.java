@@ -51,6 +51,10 @@ public class FW_Parm {
   public static FW_SetOfBlocks getCurrentSetOfBlocks() {
     return (FW_SetOfBlocks) mainWin.blockSetsDesktop.getFocus();
   }
+  
+  public static FW_SetOfBlocks getSetOfBlocksByName(String name) {
+    return (FW_SetOfBlocks) mainWin.blockSetsDesktop.getByName(name);
+  }
 
   public static FW_BlockInterface getCurrentBlockInterface() {
     FW_BlockFrame gg =(FW_BlockFrame) mainWin.blocksDesktop.getFocus();

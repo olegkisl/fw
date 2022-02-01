@@ -39,7 +39,7 @@ public class FW_ImagePanel extends JPanel implements MouseListener,
     int x = 0, y = 0, xend = 0, yend = 0;
     double scale = 1.0;
     final static double scaleMax = 10.0;
-    final static double scaleMin = 0.1;
+    final static double scaleMin = 0.01;
     int ddx = 0, ddy = 0;
 
     public double changeScale(double c) {

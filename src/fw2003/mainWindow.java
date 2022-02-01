@@ -127,6 +127,10 @@ public class mainWindow extends JFrame {
     jOptions.addActionListener(new mainWindow_jOptions_actionAdapter(this));
     jDeleteAllBlocks.setText("Delete All Image Producers from IP Pane");
     jDeleteAllBlocks.addActionListener(new mainWindow_jDeleteAllBlocks_actionAdapter(this));
+    
+    jMutator.setText("Mutation Process");
+    jMutator.addActionListener(new mainWindow_jMutator_actionAdapter(this));
+    
     jMacro.setText("Macro");
     jMacro.addActionListener(new mainWindow_jMacro_actionAdapter(this));
     jMacroType.setMaximumSize(new Dimension(32767, 120));
@@ -215,6 +219,7 @@ public class mainWindow extends JFrame {
     jMenu4.add(savePallet);
     jMenu5.add(jOptions);
     jMenu5.add(jDeleteAllBlocks);
+    jMenu5.add( jMutator);
         jMenu5.addSeparator();
         jMenu5.add(jMenuStartMacro);
         jMenu5.add(jMenuStopMacro);
@@ -295,6 +300,7 @@ public class mainWindow extends JFrame {
   JMenu jMenu5 = new JMenu();
   JMenuItem jOptions = new JMenuItem();
   JMenuItem jDeleteAllBlocks = new JMenuItem();
+  JMenuItem jMutator = new JMenuItem();
   JCheckBox jMacro = new JCheckBox();
   JComboBox jMacroType = new JComboBox();
     JMenuItem jMenuCopy = new JMenuItem();
@@ -400,6 +406,17 @@ public class mainWindow extends JFrame {
     blocksDesktop.removeAllFrames();
   }
 
+  void jMutator_actionPerformed(ActionEvent e) {
+    FW_MUTATOR dlg = new FW_MUTATOR(this);
+       Dimension dlgSize = dlg.getPreferredSize();
+       Dimension frmSize = getSize();
+       Point loc = getLocation();
+       dlg.setLocation((frmSize.width - dlgSize.width) / 2 + loc.x, (frmSize.height - dlgSize.height) / 2 + loc.y);
+       dlg.setModal(true);
+       dlg.pack();
+       dlg.show();
+  }
+  
   void jMacro_actionPerformed(ActionEvent e) {
     if(jMacro.isSelected())
         macroRecoder.start();
@@ -817,6 +834,17 @@ class mainWindow_jDeleteAllBlocks_actionAdapter implements java.awt.event.Action
   }
   public void actionPerformed(ActionEvent e) {
     adaptee.jDeleteAllBlocks_actionPerformed(e);
+  }
+}
+
+class mainWindow_jMutator_actionAdapter implements java.awt.event.ActionListener {
+  mainWindow adaptee;
+
+  mainWindow_jMutator_actionAdapter(mainWindow adaptee) {
+    this.adaptee = adaptee;
+  }
+  public void actionPerformed(ActionEvent e) {
+    adaptee.jMutator_actionPerformed(e);
   }
 }
 

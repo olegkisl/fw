@@ -264,7 +264,7 @@ public class FW_SetOfBlocksFrame extends FW_InternalFrame implements
      }*/
 
     public FW_SetOfBlocksFrame(FW_Desktop d, File root) {
-        super(d, "IP Factory " + root.getName());
+        super(d, root.getName());
         this.root = root;
         model = new FWAdapter_BlockSetTree(root);
         createTree(root, true);
@@ -390,7 +390,19 @@ public class FW_SetOfBlocksFrame extends FW_InternalFrame implements
                }
 
     }
-
+    
+ FW_BlockInterface build_Object() {
+        FW_BlockInterface b = getCurrentBlock();
+        if (b == null) {
+            b = getDefaultStartBlock();
+        }
+        if (b == null) { 
+            return null;
+        }
+        FW_BlockInterface bb = FW_Parm.getCurrentBuilder().construct(
+                getBlocksList(), b);    
+        return bb;      
+    }
 
     void jBuild_actionPerformed(ActionEvent e) {
         FW_BlockInterface b = getCurrentBlock();

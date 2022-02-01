@@ -49,6 +49,18 @@ public class FW_Desktop extends JDesktopPane
   }
   frames.clear();
   }
+ 
+    public FW_InternalFrame getByName(String name) {
+        for (Iterator i = frames.iterator(); i.hasNext();) {
+            FW_InternalFrame item = (FW_InternalFrame) i.next();
+            System.out.println(item.name);
+            System.out.println(name);
+            if (item.name == null ? name == null : item.name.equals(name)) {
+                return item;
+            }
+        }
+        return null;
+    }
 
   public int nn() {
    return frames.size();
