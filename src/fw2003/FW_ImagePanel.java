@@ -302,6 +302,32 @@ public class FW_ImagePanel extends JPanel implements MouseListener,
         imagePaintThread.start();
         // }
     }
+    
+     public void startPaint(FW_BlockInterface b, int xmax, int ymax, int xdelta, int ydelta) {
+        pressed = false;
+        //  if(imagePaintThread == null){ //Uniq Painting thread
+        int ax = (xend - x);
+        int ay = (yend - y);
+        int rr = ax * ax + ay * ay;
+        if (rr == 0) {
+            return;
+        }
+        double scl = Math.sqrt((double) rr);
+        double sn = ay / scl, cs = ax / scl;
+        //     AffineTransform hh = new AffineTransform(cs, sn, -sn, cs, 0.0, 0.0);
+        AffineTransform hh = new AffineTransform(sn, -cs, cs, sn, 0.0, 0.0);
+        g2img.setStroke(new BasicStroke(0.0f));
+        current_trans = AffineTransform.getTranslateInstance(x, y);
+        current_trans.scale(scl, scl);
+        current_trans.concatenate(hh);
+
+        g2img.setTransform(g2img_trans);
+        g2img.transform(current_trans);
+        icont = new FW_ImageContext(img, g2img, this, xmax, ymax, xdelta, ydelta);
+        imagePaintThread = new FW_ImagePaint(icont, b, this);
+        imagePaintThread.start();
+        // }
+    }
 
     public void startPaint_synchronized(FW_BlockInterface b) {
         pressed = false;

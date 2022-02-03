@@ -28,6 +28,10 @@ public class FW_ImageContext {
     Graphics2D g2img = null;
     int maxX = 1;
     int maxY = 1;
+    int deltaX=0;  // used for collage  building
+    int deltaY=0;
+    int maxXw = 1; // Always maximum image size to paint
+    int maxYw = 1;
     JPanel panel;
     int count = 0;
     ColorModel cmod = ColorModel.getRGBdefault();
@@ -67,12 +71,47 @@ public class FW_ImageContext {
         this.img = img;
         this.g2img = g2img;
         this.panel = panel;
+        maxXw = img.getWidth();
+        maxYw = img.getHeight();
         maxX = img.getWidth();
         maxY = img.getHeight();
+        deltaX=0;  
+        deltaY=0;
         stopped = false;
         g2img.setStroke(new BasicStroke(0.0f));
     }
-
+    
+    
+     public FW_ImageContext(BufferedImage img, Graphics2D g2img, JPanel panel, int xmax, int ymax, int xdelta, int ydelta) {
+        this.img = img;
+        this.g2img = g2img;
+        this.panel = panel;
+        maxXw = img.getWidth();
+        maxYw = img.getHeight();
+        maxX = xmax;  //img.getWidth();
+        maxY = ymax; //img.getHeight();
+        deltaX=xdelta;  
+        deltaY=ydelta;
+        System.out.println("DELTA_____>>>>" + deltaX+" "+deltaY);
+        stopped = false;
+        g2img.setStroke(new BasicStroke(0.0f));
+    }
+     
+    private void setRGB(int nx,int ny, int nn){
+       int nnx=nx+deltaX;
+       int nny=ny+deltaY;
+       if(nnx<0 || nny<0 || nnx>=maxXw || nny>=maxYw) return;
+       img.setRGB(nnx, nny, nn);
+    }
+    
+    private int getRGB(int nx,int ny){
+       int nnx=nx+deltaX;
+       int nny=ny+deltaY;
+       if(nnx<0 || nny<0 || nnx>=maxXw || nny>=maxYw) return 0;
+       return img.getRGB(nx, ny);   
+    }
+      
+   
 /////////// set Transformation
     public AffineTransform getTransform() {
         return g2img.getTransform();
@@ -314,14 +353,14 @@ public class FW_ImageContext {
     }
 
     public int pGet() { // get current RGB value
-        return img.getRGB(nx, ny);
+        return getRGB(nx, ny);
     }
 
     public void pSet(int r, int g, int b) { // set the result after calculation of  f(x,y)
         ///// quick draft paint
         if (n_repeat_max <= 1) {
             int nn = b + 256 * g + (256 * 256) * r;
-            img.setRGB(nx, ny, nn);
+            setRGB(nx, ny, nn);
             count++;
             if (count > maxCount) {
                 count = 0;
@@ -341,7 +380,7 @@ public class FW_ImageContext {
             g = (int) (gsum / wsum);
             b = (int) (bsum / wsum);
             int nn = b + 256 * g + (256 * 256) * r;
-            img.setRGB(nx, ny, nn);
+            setRGB(nx, ny, nn);
             count++;
             if (count > maxCount) {
                 count = 0;
@@ -490,7 +529,7 @@ public class FW_ImageContext {
         int g = (int) (g1 * 255.0);
         int b = (int) (b1 * 255.0);
         int nn = b + 256 * g + (256 * 256) * r;
-        img.setRGB(nx, ny, nn);
+        setRGB(nx, ny, nn);
         count++;
         if (count > maxCount) {
             count = 0;
@@ -518,7 +557,7 @@ public class FW_ImageContext {
         if (ny >= maxY) {
             return;
         }
-        int nnn = img.getRGB(nx, ny);
+        int nnn = getRGB(nx, ny);
         int nb0 = nnn & 0xff;
         int ng0 = (nnn >> 8) & 0xff;
         int nr0 = (nnn >> 16) & 0xff;
@@ -547,7 +586,7 @@ public class FW_ImageContext {
         }
 
         int nn = b + 256 * g + (256 * 256) * r;
-        img.setRGB(nx, ny, nn);
+        setRGB(nx, ny, nn);
         // System.out.println(" "+nr0+" "+ng0+" "+nb0+" "+r1+" "+g1+" "+b1+" "+alfa+" "+r+" "+g+" "+b);
         count++;
         if (count > maxCount) {

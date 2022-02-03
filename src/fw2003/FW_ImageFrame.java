@@ -134,10 +134,16 @@ public class FW_ImageFrame extends FW_InternalFrame{
 
   void paintButton_actionPerformed(ActionEvent e) {
    if(FW_Parm.getCurrentBlockInterface()==null) return;
-   ip.save();
+   //ip.save();
    FW_Parm.getMacroRecorder().add(ip.x,ip.y,ip.xend,ip.yend, FW_Parm.getCurrentBlockInterface());
    ip.startPaint(FW_Parm.getCurrentBlockInterface());
    ip.requestFocusInWindow();  /// new
+  }
+  
+  void paint_collage(int xmax, int ymax, int xdelta, int ydelta) {
+   if(FW_Parm.getCurrentBlockInterface()==null) return;
+   ip.startPaint(FW_Parm.getCurrentBlockInterface(), xmax, ymax, xdelta, ydelta);
+   ip.requestFocusInWindow();  
   }
   
   void paint_synchronized() {
