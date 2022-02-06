@@ -270,7 +270,82 @@ public class FW_Builder {
     }
 
     /////// Utils
+    
+    // Atom injections
+    public static final int son_max = 5; // max sons in injected node
+    
+    public static boolean classCompartable(FW_BlockInterface parent,FW_BlockInterface new_son, int nn_son) {
+        Class c1 = parent.getSonClass(nn_son);
+        return c1.isInstance(new_son);
+    }
 
+    public static void randomInjections(FW_BlockInterface tree, int terminal_nodes_only,
+            double probability, List<FW_BlockInterface> ls) {
+
+        // create the structure of nodes to inject
+        List<List<FW_BlockInterface>> metalist = new ArrayList<List<FW_BlockInterface>>();
+        for (int i = 0; i < son_max; i++) {
+            metalist.add(new ArrayList<FW_BlockInterface>());
+        }
+
+        for (FW_BlockInterface b : ls) {
+            FW_BlockInterface b_copy = b.copy();
+            int nn = b_copy.getNumberOfSons();
+            if (nn < son_max) {
+                metalist.get(nn).add(b_copy);
+            }
+        }
+
+        //Nodes Injections:
+        for (int i = 0; i < tree.getNumberOfSons(); i++) {
+            randomInjections_1(terminal_nodes_only, probability, metalist,
+                    tree, i);
+        }
+    }
+     
+     public static void randomInjections_1(int terminal_nodes_only, double probability,
+            List<List<FW_BlockInterface>> metalist, FW_BlockInterface parent, int son_number) {
+        FW_BlockInterface block_old = parent.getSon(son_number);
+        if (block_old == null) {
+            return;
+        }
+        // change randomly block_old and modify links
+        int nn_sons = block_old.getNumberOfSons();
+        if (terminal_nodes_only == 0 || nn_sons == 0) {
+            if (FW_Rand.rand01() < probability) {
+                FW_BlockInterface block = null;
+                if (nn_sons < son_max) {
+                    List<FW_BlockInterface> ls = metalist.get(nn_sons);
+                    int size = FW_Rand.rand(ls.size());
+                    if (size > 0) {
+                        int node = FW_Rand.rand(size);
+                        block = ls.get(node).copy();
+                        boolean comparable = classCompartable(parent, block, son_number);
+                        for (int j = 0; j < nn_sons; j++) {
+                            comparable = comparable && classCompartable(block, block_old.getSon(j), j);
+                        }
+                        if (comparable) {
+                            parent.setSon(son_number, block);
+                            for (int j = 0; j < nn_sons; j++) {
+                                block.setSon(j, block_old.getSon(j));
+                            }
+                        }
+                    }
+                    if (block != null) {
+                        block_old = block;
+                    }
+                }
+            }
+        }
+        // recursively do the same with sons of block_old
+        for (int i = 0; i < block_old.getNumberOfSons(); i++) {
+            randomInjections_1(terminal_nodes_only, probability, metalist,
+                    block_old, i);
+        }
+
+    }
+     
+     
     // Tree randomRecombination
     public static void randomRecombination(FW_BlockInterface tree, int sliceType) {
         for (int i = 0; i < 10; i++) {

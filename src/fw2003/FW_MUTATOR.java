@@ -22,6 +22,9 @@ public class FW_MUTATOR extends JDialog {
     static int nMutations = 2;
     static int nStrMmutations = 2;
     static int nClrMutations = 0;
+    static int injection_terminal_nodes_only=0;
+    static double injection_probability =0.0;
+    
     JPanel jPanel1 = new JPanel();
     JPanel jPanel2 = new JPanel();
     JButton jOK = new JButton();
@@ -41,6 +44,10 @@ public class FW_MUTATOR extends JDialog {
     JTextField jStructuralNmutations = new JTextField();
     JLabel jLabel7 = new JLabel();
     JTextField jColorlNmutations = new JTextField();
+    JLabel jLabel8 = new JLabel();
+    JTextField jinjection_probability = new JTextField();
+    JLabel jLabel9 = new JLabel();
+    JTextField jinjection_terminal_nodes_only = new JTextField();
 
     public FW_MUTATOR(Frame parent) {
         super(parent);
@@ -59,7 +66,7 @@ public class FW_MUTATOR extends JDialog {
         jPanel1.setLayout(gridLayout1);
         gridLayout1.setColumns(2);
         gridLayout1.setHgap(2);
-        gridLayout1.setRows(7);
+        gridLayout1.setRows(9);
         gridLayout1.setVgap(2);
         jPanel1.setBorder(BorderFactory.createRaisedBevelBorder());
         jLabel1.setText("Results Folder Name");
@@ -74,7 +81,8 @@ public class FW_MUTATOR extends JDialog {
         jNmutations.setText("1");
         jLabel6.setText("N structural mutations");
         jLabel7.setText("N color mutations");
-
+        jLabel8.setText("Probabilituy of node injection from Current Folder");
+        jLabel9.setText("0-injection to all nodes, 1-injection to terminal nodes");
         ///////////////
 
 
@@ -98,6 +106,10 @@ public class FW_MUTATOR extends JDialog {
         jPanel1.add(jStructuralNmutations, null);
         jPanel1.add(jLabel7, null);
         jPanel1.add(jColorlNmutations, null);
+        jPanel1.add(jLabel8, null);
+        jPanel1.add(jinjection_probability, null);
+        jPanel1.add(jLabel9, null);
+        jPanel1.add(jinjection_terminal_nodes_only, null);
 
         initParms();
     }
@@ -111,10 +123,12 @@ public class FW_MUTATOR extends JDialog {
         jNmutations.setText("" + nMutations);
         jStructuralNmutations.setText("" + nStrMmutations);
         jColorlNmutations.setText("" + nClrMutations);
-
+        
+        jinjection_probability.setText("" + injection_probability);
+        jinjection_terminal_nodes_only.setText("" + injection_terminal_nodes_only);
     }
 
-    void jOK_actionPerformed(ActionEvent e) {
+    void readParams(){
         resultsFolder = jResultsFolder.getText();
         rootBlock = Integer.parseInt(jRootBlock.getText());
         nnmutants = Integer.parseInt(jNNmutants.getText());
@@ -122,18 +136,47 @@ public class FW_MUTATOR extends JDialog {
         nMutations = Integer.parseInt(jNmutations.getText());
         nStrMmutations = Integer.parseInt(jStructuralNmutations.getText());
         nClrMutations = Integer.parseInt(jColorlNmutations.getText());
+        injection_probability = Double.parseDouble(jinjection_probability.getText());
+        injection_terminal_nodes_only=Integer.parseInt(jinjection_terminal_nodes_only.getText());
+    }
+    
+    void jOK_actionPerformed(ActionEvent e) {
+        readParams();
 
-        if (rootBlock == 1) {    
+        if (rootBlock == 1) {
             FW_BlockInterface blk = FW_Parm.getCurrentBlockInterface();
             FW_SetOfBlocks sb = FW_Parm.getSetOfBlocksByName(resultsFolder); //FW_Parm.getCurrentSetOfBlocks();
             FW_PalletInterface pl = FW_Parm.getCurrentPallet();
-            if (sb == null  || blk==null) {
+            if (blk == null) {
+                FW_Utils.warning("Selectmodel window please");
                 return;
             }
+            if (sb == null) {
+                FW_Utils.warning(resultsFolder + " models folder not found");
+                return;
+            }
+
+            ////////////////////////////////////
+            FW_SetOfBlocks sb_selected = FW_Parm.getCurrentSetOfBlocks();
+            java.util.List<FW_BlockInterface> injection_blocks = new java.util.ArrayList<FW_BlockInterface>();
+            if (sb_selected == null && injection_probability > 0) {
+                FW_Utils.warning(resultsFolder + " models folder not found");
+                return;
+            } else {
+                injection_blocks = sb_selected.getBlocksList();
+            }
+            ///////////////////////////////////
+
             FW_BlockInterface block = blk.copy();
             sb.addBlock(block);
             for (int i = 0; i < nnmutants; i++) {
                 block = blk.copy();
+                ////////////////////////////////////
+                if (injection_probability > 0.00001) {
+                    FW_Builder.randomInjections(block, injection_terminal_nodes_only,
+                            injection_probability, injection_blocks);
+                }
+                ///////////////////////////////////  
                 for (int j = 0; j < nMutations; j++) {
                     if (mutateProbub > FW_Rand.rand01()) {
                         block.mutate();
@@ -153,19 +196,22 @@ public class FW_MUTATOR extends JDialog {
                 sb.addBlock(block);
             }
             sb.updateView();
-            
-        } else if (rootBlock == 2){
+
+        } else if (rootBlock == 2) {
             //FW_BlockInterface blk = FW_Parm.getCurrentBlockInterface();
-            FW_SetOfBlocks sb = FW_Parm.getSetOfBlocksByName(resultsFolder); 
-            FW_SetOfBlocksFrame csb = (FW_SetOfBlocksFrame)FW_Parm.getCurrentSetOfBlocks();
+            FW_SetOfBlocks sb = FW_Parm.getSetOfBlocksByName(resultsFolder);
+            FW_SetOfBlocksFrame csb = (FW_SetOfBlocksFrame) FW_Parm.getCurrentSetOfBlocks();
             FW_PalletInterface pl = FW_Parm.getCurrentPallet();
-            if (sb == null  || csb == null  ) {
+            if (sb == null || csb == null) {
+                FW_Utils.warning(resultsFolder +" folder or current selected folder not found");
                 return;
             }
-            FW_BlockInterface block=null;
+            FW_BlockInterface block = null;
             for (int i = 0; i < nnmutants; i++) {
                 block = csb.build_Object();
-                if(block==null) return;
+                if (block == null) {
+                    return;
+                }
                 for (int j = 0; j < nMutations; j++) {
                     if (mutateProbub > FW_Rand.rand01()) {
                         block.mutate();
@@ -186,11 +232,12 @@ public class FW_MUTATOR extends JDialog {
             }
             sb.updateView();
         }
-        
-       dispose();
+
+        dispose();
     }
 
     void jCancel_actionPerformed(ActionEvent e) {
+        readParams();
         dispose();
     }
 }
