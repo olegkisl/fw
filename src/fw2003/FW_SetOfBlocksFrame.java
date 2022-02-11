@@ -391,6 +391,27 @@ public class FW_SetOfBlocksFrame extends FW_InternalFrame implements
 
     }
     
+ FW_BlockInterface build_Random_Object() {
+        java.util.List ls=getBlocksList();
+        if(ls.size()==0) return null;
+        FW_BlockInterface b= (FW_BlockInterface) FW_Rand.getRandObject(ls); 
+        if (b == null) { 
+            return null;
+        }
+        FW_BlockInterface bb = FW_Parm.getCurrentBuilder().construct(
+                getBlocksList(), b);    
+        return bb;  
+    } 
+ 
+ FW_BlockInterface build_Object(FW_BlockInterface root) {
+        if (root == null) { 
+            return null;
+        }
+        FW_BlockInterface bb = FW_Parm.getCurrentBuilder().construct(
+                getBlocksList(), root);    
+        return bb;      
+    }
+ 
  FW_BlockInterface build_Object() {
         FW_BlockInterface b = getCurrentBlock();
         if (b == null) {

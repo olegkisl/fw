@@ -278,6 +278,27 @@ public class FW_Builder {
         Class c1 = parent.getSonClass(nn_son);
         return c1.isInstance(new_son);
     }
+    
+    // create one tree from two with root from 1 and all others from 2
+    public static FW_BlockInterface rootInjection(FW_BlockInterface from_tree_0, FW_BlockInterface to_tree_0) {
+        FW_BlockInterface from_tree = from_tree_0.copy();
+        FW_BlockInterface to_tree = to_tree_0.copy();
+        int nn_sons_from = from_tree.getNumberOfSons();
+        int nn_sons = to_tree.getNumberOfSons();
+        if (nn_sons_from != nn_sons) {
+            return null;
+        }
+        boolean comparable = true;
+        for (int j = 0; j < nn_sons; j++) {
+            comparable = comparable && classCompartable(from_tree, to_tree.getSon(j), j);
+        }
+        if (comparable) {
+            for (int j = 0; j < nn_sons; j++) {
+                from_tree.setSon(j, to_tree.getSon(j));
+            }
+        }
+        return from_tree;
+    }
 
     public static void randomInjections(FW_BlockInterface tree, int terminal_nodes_only,
             double probability, List<FW_BlockInterface> ls) {
