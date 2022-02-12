@@ -5,19 +5,16 @@ package blocks;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: </p>
+ *
  * @author Oleg Kislyuk
  * @version 3.0
  */
 import fw2003.*;
 import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
 import java.util.*;
-import javax.swing.tree.*;
-import java.io.*;
 
 // ROTATION
-public class AF_COLOR extends Block_Prototype_Fxy {
+public class AF_COLOR extends Block_Prototype_Fxy implements FW_PalletEditorInterface {
 
     static final long serialVersionUID = 1L;
     int ar = 250, ag = 250, ab = 250,
@@ -29,6 +26,67 @@ public class AF_COLOR extends Block_Prototype_Fxy {
     public AF_COLOR() {
         super("AF_COLOR", 1, 5);
     }
+
+    ////////////// Interface with color editor implements FW_PalletEditorInterface
+    public java.util.List<java.awt.Color> getColorsFromObject() {
+        java.util.List<java.awt.Color> clrs = new ArrayList<java.awt.Color>();
+        clrs.add(new Color(ar, ag, ab));
+        clrs.add(new Color(br, bg, bb));
+        clrs.add(new Color(cr, cg, cb));
+        clrs.add(new Color(dr, dg, db));
+        clrs.add(new Color(er, eg, eb));
+        return clrs;
+    }
+
+    public void getColorsToObject(java.util.List<java.awt.Color> clrs) {
+        for (int i = 0; i < clrs.size(); i++) {
+            Color c = clrs.get(i);
+            switch (i) {
+                case 0:
+                    ar = c.getRed();
+                    ag = c.getGreen();
+                    ab = c.getBlue();
+                    break;
+                case 1:
+                    br = c.getRed();
+                    bg = c.getGreen();
+                    bb = c.getBlue();
+                    break;
+                case 2:
+                    cr = c.getRed();
+                    cg = c.getGreen();
+                    cb = c.getBlue();
+                    break;
+                case 3:
+                    dr = c.getRed();
+                    dg = c.getGreen();
+                    db = c.getBlue();
+                    break;
+                case 4:
+                    er = c.getRed();
+                    eg = c.getGreen();
+                    eb = c.getBlue();
+                    break;
+
+            }
+        }
+    }
+
+    ;
+    
+     //Free Form Editor////////////////////////////////////////////////
+    @Override
+    public boolean isEditable() {
+        return true;
+    }
+
+    @Override
+    public javax.swing.JPanel getEditor() {
+        return new FW_BlockPalletEditor(this);
+    }
+//////////////////////////////////////////////////////////////////////////
+    
+    
 
     public boolean mutatePallet1(FW_PalletInterface p) {
         if (p.getColorsList().size() > 1) {
@@ -68,7 +126,9 @@ public class AF_COLOR extends Block_Prototype_Fxy {
     }
 
     public void mutatePallet_this(FW_PalletInterface p) {
-        if( mutatePallet1(p)) return;
+        if (mutatePallet1(p)) {
+            return;
+        }
         Color c, cw = Color.WHITE;
         c = p.getColor();
         ar = c.getRed();
