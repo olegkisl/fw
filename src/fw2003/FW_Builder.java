@@ -138,6 +138,21 @@ public class FW_Builder {
         constr(depth, blocksList, b);
         return b;
     }
+    
+    public FW_BlockInterface construct(java.util.List blocksList,
+            FW_BlockInterface blockInit, int initialDepth) {
+        clearUNodes();
+        maxDepth = FW_Parm.getMaxBlockDepth();
+        FW_BlockInterface b = blockInit.copy();
+        if (b == null) {
+            b = getInitBlock(blocksList);
+        }
+        if (b == null) {
+            return null;
+        }
+        constr(initialDepth, blocksList, b);
+        return b;
+    }
 
     private FW_BlockInterface getInitBlock(java.util.List blocksList) {
         FW_BlockInterface bb;
@@ -299,7 +314,54 @@ public class FW_Builder {
         }
         return from_tree;
     }
+    
+    /// Random injection of o subtree ///////////////////////////////////////////////////
+    public static void randomSubtreeInjections(FW_BlockInterface tree, int terminal_nodes_only,
+            double probability, List<FW_BlockInterface> ls) {
+        if (ls.size() == 0) {
+            return;
+        }
+        int depth = 1;
+        //Subtree Injections:
+        for (int i = 0; i < tree.getNumberOfSons(); i++) {
+            randomSubtreeInjections_1(terminal_nodes_only, probability, ls,
+                    tree, i, depth);
+        }
+    }
 
+    public static void randomSubtreeInjections_1(int terminal_nodes_only, double probability,
+            List<FW_BlockInterface> list, FW_BlockInterface parent, int son_number, int depth) {
+        FW_BlockInterface block_old = parent.getSon(son_number);
+        if (block_old == null) {
+            return;
+        }
+        // change randomly block_old and modify links
+        int nn_sons = block_old.getNumberOfSons();
+        if (terminal_nodes_only == 0 || nn_sons == 0) {
+            if (FW_Rand.rand01() < probability) {
+                FW_BlockInterface root = (FW_BlockInterface) FW_Rand.getRandObject(list);
+                boolean comparable = classCompartable(parent, root, son_number);
+                if (comparable) {
+                    FW_BlockInterface block = FW_Parm.getCurrentBuilder().construct(
+                            list, root,depth);
+                    if (block == null) {
+                        return;
+                    }
+                    parent.setSon(son_number, block);
+                }
+                return;
+            }
+        }
+
+        // recursively do the same with sons of block_old
+        for (int i = 0; i < block_old.getNumberOfSons(); i++) {
+            randomSubtreeInjections_1(terminal_nodes_only, probability, list,
+                    block_old, i, depth + 1);
+        }
+
+    }
+
+    /// Random injection of one node /////////////////////////////////////////////////////
     public static void randomInjections(FW_BlockInterface tree, int terminal_nodes_only,
             double probability, List<FW_BlockInterface> ls) {
 
@@ -367,7 +429,7 @@ public class FW_Builder {
     }
      
      
-    // Tree randomRecombination
+    // Tree randomRecombination /////////////////////////////////////////////////
     public static void randomRecombination(FW_BlockInterface tree, int sliceType) {
         for (int i = 0; i < 10; i++) {
             randomRecombination_1(tree, sliceType);

@@ -22,10 +22,14 @@ public class FW_MUTATOR extends JDialog {
     static int nMutations = 2;
     static int nStrMmutations = 2;
     static int nClrMutations = 0;
+    
     static String injectionFolder = "0_BLOCKS";
     static int injection_terminal_nodes_only = 0;
     static double injection_probability = 0.0;
     static int injection_root = 0;
+    
+    static String treeinjectionFolder = "0_BLOCKS";
+    static double treeinjection_probability = 0.0;
     
     JPanel jPanel1 = new JPanel();
     JPanel jPanel2 = new JPanel();
@@ -54,6 +58,11 @@ public class FW_MUTATOR extends JDialog {
     JTextField jinjection_terminal_nodes_only = new JTextField();
     JLabel jLabel10 = new JLabel();
     JTextField jinjection_root = new JTextField();
+    
+    JLabel jLabel11 = new JLabel();
+    JTextField jtreeinjectionFolder = new JTextField();
+    JLabel jLabel12 = new JLabel();
+    JTextField jtreeinjection_probability  = new JTextField();
 
     public FW_MUTATOR(Frame parent) {
         super(parent);
@@ -72,7 +81,7 @@ public class FW_MUTATOR extends JDialog {
         jPanel1.setLayout(gridLayout1);
         gridLayout1.setColumns(2);
         gridLayout1.setHgap(2);
-        gridLayout1.setRows(11);
+        gridLayout1.setRows(13);
         gridLayout1.setVgap(2);
         jPanel1.setBorder(BorderFactory.createRaisedBevelBorder());
         jLabel1.setText("Result Models Folder Name");
@@ -83,9 +92,11 @@ public class FW_MUTATOR extends JDialog {
         jLabel6.setText("Mutations: N structural mutations");
         jLabel7.setText("Mutations: N color mutations");
         jLabel7a.setText("Injections: Folder Name");
-        jLabel8.setText("Injections: Probabilituy of node injection from Current Folder");
+        jLabel8.setText("Injections: Probabilituy of node injection from Injection Folder");
         jLabel9.setText("Injections: 0-injection to all nodes, 1-injection to terminal nodes");
-        jLabel10.setText("Substitution: 0-none 1- selected object root node to processed object root node");
+        jLabel10.setText("RootSubstitution: 0-none 1- selected object root node to processed object root node");
+        jLabel11.setText("SubTreeInjections: Folder Name");
+        jLabel12.setText("SubTreeInjections: Probabilituy of node injection from SubTreeInjections Folder");
         ///////////////
 
 
@@ -118,7 +129,10 @@ public class FW_MUTATOR extends JDialog {
         jPanel1.add(jLabel10, null);
         jPanel1.add(jinjection_root , null);
         
-
+        jPanel1.add(jLabel11, null);
+        jPanel1.add(jtreeinjectionFolder , null);
+        jPanel1.add(jLabel12, null);
+        jPanel1.add(jtreeinjection_probability , null);
         initParms();
     }
 
@@ -136,6 +150,9 @@ public class FW_MUTATOR extends JDialog {
         jinjection_probability.setText("" + injection_probability);
         jinjection_terminal_nodes_only.setText("" + injection_terminal_nodes_only);
         jinjection_root.setText("" + injection_root);
+        
+        jtreeinjectionFolder.setText("" + treeinjectionFolder);
+        jtreeinjection_probability.setText("" + treeinjection_probability);
     }
 
     void readParams() {
@@ -150,6 +167,9 @@ public class FW_MUTATOR extends JDialog {
         injection_terminal_nodes_only = Integer.parseInt(jinjection_terminal_nodes_only.getText());
         injectionFolder = jInjectionFolder.getText();
         injection_root = Integer.parseInt(jinjection_root.getText());
+        
+        treeinjectionFolder = jtreeinjectionFolder.getText();;
+        treeinjection_probability = Double.parseDouble(jtreeinjection_probability.getText());
     }
 
     void jOK_actionPerformed(ActionEvent e) {
@@ -220,7 +240,7 @@ public class FW_MUTATOR extends JDialog {
                 return;
             }
             ////////////////////////////////////
-            // list of blocks to inject to processing blocks
+            // list of blocks to  blocks to processing blocks
             java.util.List<FW_BlockInterface> injection_blocks = new java.util.ArrayList<FW_BlockInterface>();
             if (injection_probability > 0.000001) {
                 FW_SetOfBlocks selected = FW_Parm.getSetOfBlocksByName(injectionFolder);
@@ -230,12 +250,23 @@ public class FW_MUTATOR extends JDialog {
                 }
                 injection_blocks = selected.getBlocksList();
             }
+            ////////////////////////////////////
+            // list of blocks to inject subtrees to processing blocks
+            java.util.List<FW_BlockInterface> treeinjection_blocks = new java.util.ArrayList<FW_BlockInterface>();
+            if (treeinjection_probability > 0.000001) {
+                FW_SetOfBlocks selected = FW_Parm.getSetOfBlocksByName(treeinjectionFolder);
+                if (selected == null) {
+                    FW_Utils.warning(treeinjectionFolder + " injection folder not found");
+                    return;
+                }
+                treeinjection_blocks = selected.getBlocksList();
+            }
             ///////////////////////////////////
-            // list of blocks to get for further mutations
+            // list of blocks of curent selected folder  to get for further mutations
             FW_BlockInterface block = null;
             java.util.List<FW_BlockInterface> blocks_list = csb.getBlocksList();
             if (blocks_list == null || blocks_list.size() == 0) {
-                FW_Utils.warning(injectionFolder + " select not empty models folder please");
+                FW_Utils.warning(" select not empty models folder please");
                 return;
             }
             //////////////////////////////////
@@ -274,6 +305,12 @@ public class FW_MUTATOR extends JDialog {
                         return;
                     }
                     block = FW_Builder.rootInjection(blk, block);
+                }
+                ////////////////////////////////////
+                // injections of subtrees to processing block tree
+                if (treeinjection_probability > 0.00001) {
+                    FW_Builder.randomSubtreeInjections(block, injection_terminal_nodes_only,
+                            treeinjection_probability, treeinjection_blocks);
                 }
                 ////////////////////////////////////
                 // injections of individual blocks to processing block tree
