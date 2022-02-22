@@ -317,7 +317,7 @@ public class FW_Builder {
     
     /// Random injection of o subtree ///////////////////////////////////////////////////
     public static void randomSubtreeInjections(FW_BlockInterface tree, int terminal_nodes_only,
-            double probability, List<FW_BlockInterface> ls) {
+            double probability, List<FW_BlockInterface> ls, FW_TREE_DEPTH check_depth) {
         if (ls.size() == 0) {
             return;
         }
@@ -325,12 +325,13 @@ public class FW_Builder {
         //Subtree Injections:
         for (int i = 0; i < tree.getNumberOfSons(); i++) {
             randomSubtreeInjections_1(terminal_nodes_only, probability, ls,
-                    tree, i, depth);
+                    tree, i, depth, check_depth);
         }
     }
 
     public static void randomSubtreeInjections_1(int terminal_nodes_only, double probability,
-            List<FW_BlockInterface> list, FW_BlockInterface parent, int son_number, int depth) {
+            List<FW_BlockInterface> list, FW_BlockInterface parent, int son_number, int depth,
+            FW_TREE_DEPTH check_depth) {
         FW_BlockInterface block_old = parent.getSon(son_number);
         if (block_old == null) {
             return;
@@ -338,7 +339,7 @@ public class FW_Builder {
         // change randomly block_old and modify links
         int nn_sons = block_old.getNumberOfSons();
         if (terminal_nodes_only == 0 || nn_sons == 0) {
-            if (FW_Rand.rand01() < probability) {
+            if (check_depth.isChangable(depth) && (FW_Rand.rand01() < probability)) {
                 FW_BlockInterface root = (FW_BlockInterface) FW_Rand.getRandObject(list);
                 boolean comparable = classCompartable(parent, root, son_number);
                 if (comparable) {
@@ -356,7 +357,7 @@ public class FW_Builder {
         // recursively do the same with sons of block_old
         for (int i = 0; i < block_old.getNumberOfSons(); i++) {
             randomSubtreeInjections_1(terminal_nodes_only, probability, list,
-                    block_old, i, depth + 1);
+                    block_old, i, depth + 1, check_depth);
         }
 
     }
@@ -427,7 +428,53 @@ public class FW_Builder {
         }
 
     }
+    
+    ////////////  TREE DESTRUCTOR//////////////////////
+    
+    public java.util.List<FW_BlockInterface> destructor(FW_BlockInterface tree, double start_probub, int depthMin, int depthMax, double trim_probub) {
+        List<FW_BlockInterface> ls = new LinkedList<FW_BlockInterface>();
+        int depth = 0;
+        destructor_1(ls, tree, start_probub, depthMin, depthMax, trim_probub, depth);
+        return ls;
+    }
+    
+     private void destructor_1(List<FW_BlockInterface> ls, FW_BlockInterface tree,
+            double start_probub, int depthMin, int depthMax, double trim_probub, int depth) {
+        if(tree==null) return;
+        if (depth == depthMin) {
+            if (FW_Rand.rand01() < start_probub) {
+                ls.add(tree);
+                destructor_2(tree, depthMax, trim_probub, depth);
+            }
+            return;
+        }
+        for (int i = 0; i < tree.getNumberOfSons(); i++) {
+            if (depth < depthMin) {
+                FW_BlockInterface bb = tree.getSon(i);
+                destructor_1(ls, bb, start_probub, depthMin, depthMax, trim_probub, depth + 1);
+            }
+        }
+        return;
+    }  
      
+     private void destructor_2( FW_BlockInterface tree,
+             int depthMax, double trim_probub, int depth) {
+        if(tree==null) return;
+        for (int i = 0; i < tree.getNumberOfSons(); i++) {
+            if (depth >= depthMax) {
+                tree.setSon(i, null);
+            } else if (FW_Rand.rand01() < trim_probub) {
+                tree.setSon(i, null);
+            } else {
+                FW_BlockInterface bb = tree.getSon(i);
+                destructor_2(bb, depthMax, trim_probub, depth + 1);
+            }
+
+        }
+        
+    }  
+   
+    
      
     // Tree randomRecombination /////////////////////////////////////////////////
     public static void randomRecombination(FW_BlockInterface tree, int sliceType) {

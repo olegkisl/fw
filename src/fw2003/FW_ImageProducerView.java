@@ -17,12 +17,19 @@ public class FW_ImageProducerView extends JFrame {
     java.util.List ls = new ArrayList(300);
 
     public FW_ImageProducerView(FW_BlockInterface p) throws HeadlessException {
-        super("Image Producer Structure");
+        super("Model Structure");
+        String info="";
+        if (p instanceof Block_Prototype_Fxy) {
+            PaintTransformation pt = ((Block_Prototype_Fxy)p).paintTransformation;
+            if( pt != null){
+                info=("    image X/Y ratio = "+ pt.maxX+"/"+pt.maxY);
+            }
+        }
         this.ip = p;
         try {
             treeInit();
             jbInit();
-            jTextField1.setText("Number of nodes = " + nnNodes);
+            jTextField1.setText("Number of nodes = " + nnNodes+info);
             jTree1.getSelectionModel().setSelectionMode
                     (TreeSelectionModel.SINGLE_TREE_SELECTION);
 

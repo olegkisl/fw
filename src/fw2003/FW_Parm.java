@@ -106,11 +106,11 @@ public class FW_Parm {
   private static int    sliceForMutation = 0;    // 0 all nodes
                                                  // positive slice of the tree from top
                                                  // negative: slice from bottom not recomended
-  private static double nonterminalProbability = 0.0;  // nonterm. node only selection prob in tree building
+  private static double nonterminalProbability = 0.8;  // nonterm. node only selection prob in tree building
                                                        //  0 <= use random choice
                                                        // useful to build tree with more branches
 
-  private static double recombinationMutationProbability = 0.5;  // nodes recombination on one slice
+  private static double recombinationMutationProbability = 0.9;  // nodes recombination on one slice
                                                                  // change the nature of "Large" mutations
   private static int    paintType = 1;  // values : 1-9  paint quality
   private static int    paintMode = 1;  // 0 -default, 1 - save transformation, 2-use transformation

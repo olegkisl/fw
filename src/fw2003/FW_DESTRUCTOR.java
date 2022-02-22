@@ -1,3 +1,5 @@
+
+
 package fw2003;
 
 import javax.swing.*;
@@ -13,15 +15,17 @@ import java.awt.event.*;
  * @author Oleg Kislyuk
  * @version 3.0
  */
-public class FW_MUTATOR extends JDialog {
+public class FW_DESTRUCTOR extends JDialog {
 
     static String resultsFolder = "Mresults";
     static int rootBlock = 1;
     static int nnmutants = 11;
-    static double mutateProbub = 0.5;
-    static int nMutations = 2;
-    static int nStrMmutations = 2;
-    static int nClrMutations = 0;
+    static double startProbub = 1.0;
+    static int minDepts = 2;
+    static int maxDepts = 5;
+    static double trimProbab = 0.0;
+    
+    
     static String injectionFolder = "0_BLOCKS";
     static int injection_terminal_nodes_only = 0;
     static double injection_probability = 0.0;
@@ -49,6 +53,8 @@ public class FW_MUTATOR extends JDialog {
     JTextField jStructuralNmutations = new JTextField();
     JLabel jLabel7 = new JLabel();
     JTextField jColorlNmutations = new JTextField();
+    
+    
     JLabel jLabel7a = new JLabel();
     JTextField jInjectionFolder = new JTextField();
     JLabel jLabel8 = new JLabel();
@@ -64,7 +70,7 @@ public class FW_MUTATOR extends JDialog {
     JLabel jLabel13 = new JLabel();
     JTextField jtreeinjection_min_depth = new JTextField();
 
-    public FW_MUTATOR(Frame parent) {
+    public FW_DESTRUCTOR(Frame parent) {
         super(parent);
         try {
             jbInit();
@@ -75,22 +81,23 @@ public class FW_MUTATOR extends JDialog {
 
     private void jbInit() throws Exception {
         jOK.setText("RUN");
-        jOK.addActionListener(new FW_MUTATOR_jOK_actionAdapter(this));
+        jOK.addActionListener(new FW_DESTRUCTOR_jOK_actionAdapter(this));
         jCancel.setText("Cancel");
-        jCancel.addActionListener(new FW_MUTATOR_jCancel_actionAdapter(this));
+        jCancel.addActionListener(new FW_DESTRUCTOR_jCancel_actionAdapter(this));
         jPanel1.setLayout(gridLayout1);
         gridLayout1.setColumns(2);
         gridLayout1.setHgap(2);
-        gridLayout1.setRows(14);
+        gridLayout1.setRows(7);
         gridLayout1.setVgap(2);
         jPanel1.setBorder(BorderFactory.createRaisedBevelBorder());
         jLabel1.setText("Result Models Folder Name");
         jLabel2.setText("Input model: 1-curent, 2-build selected, 3- build randomly, 4-build all");
-        jLabel3.setText("Number of mutant models to build:");
-        jLabel4.setText("Mutations: Mutation Probubility");
-        jLabel5.setText("Mutations: N parameters mutations");
-        jLabel6.setText("Mutations: N structural mutations");
-        jLabel7.setText("Mutations: N color mutations");
+        jLabel3.setText("Number of  models to decompose:");
+        jLabel4.setText("New Tree Probubility");
+        jLabel5.setText("Min Depth");
+        jLabel6.setText("Max Depth");
+        jLabel7.setText("Trim Probability");
+       
         jLabel7a.setText("Node_Injections: Folder Name");
         jLabel8.setText("Node_Injections: Probabilituy of node injection from Injection Folder");
         jLabel9.setText("Node_Injections: 0-injection to all nodes, 1-injection to terminal nodes");
@@ -121,6 +128,9 @@ public class FW_MUTATOR extends JDialog {
         jPanel1.add(jStructuralNmutations, null);
         jPanel1.add(jLabel7, null);
         jPanel1.add(jColorlNmutations, null);
+        
+        
+        /*
         jPanel1.add(jLabel7a, null);
         jPanel1.add(jInjectionFolder, null);
         jPanel1.add(jLabel8, null);
@@ -137,6 +147,7 @@ public class FW_MUTATOR extends JDialog {
         
         jPanel1.add(jLabel10, null);
         jPanel1.add(jinjection_root, null);
+        */
         initParms();
     }
 
@@ -145,11 +156,13 @@ public class FW_MUTATOR extends JDialog {
         jResultsFolder.setText("" + resultsFolder);
         jRootBlock.setText("" + rootBlock);
         jNNmutants.setText("" + nnmutants);
-        jMutateProbub.setText("" + mutateProbub);
-        jNmutations.setText("" + nMutations);
-        jStructuralNmutations.setText("" + nStrMmutations);
-        jColorlNmutations.setText("" + nClrMutations);
+        jMutateProbub.setText("" + startProbub);
+        jNmutations.setText("" + minDepts);
+        jStructuralNmutations.setText("" + maxDepts);
+        jColorlNmutations.setText("" + trimProbab);
 
+        
+        
         jInjectionFolder.setText("" + injectionFolder);
         jinjection_probability.setText("" + injection_probability);
         jinjection_terminal_nodes_only.setText("" + injection_terminal_nodes_only);
@@ -164,10 +177,12 @@ public class FW_MUTATOR extends JDialog {
         resultsFolder = jResultsFolder.getText();
         rootBlock = Integer.parseInt(jRootBlock.getText());
         nnmutants = Integer.parseInt(jNNmutants.getText());
-        mutateProbub = Double.parseDouble(jMutateProbub.getText());
-        nMutations = Integer.parseInt(jNmutations.getText());
-        nStrMmutations = Integer.parseInt(jStructuralNmutations.getText());
-        nClrMutations = Integer.parseInt(jColorlNmutations.getText());
+        startProbub = Double.parseDouble(jMutateProbub.getText());
+        minDepts = Integer.parseInt(jNmutations.getText());
+        maxDepts = Integer.parseInt(jStructuralNmutations.getText());
+        trimProbab = Double.parseDouble(jColorlNmutations.getText());
+        
+        
         injection_probability = Double.parseDouble(jinjection_probability.getText());
         injection_terminal_nodes_only = Integer.parseInt(jinjection_terminal_nodes_only.getText());
         injectionFolder = jInjectionFolder.getText();
@@ -184,7 +199,6 @@ public class FW_MUTATOR extends JDialog {
         if (rootBlock == 1) {
             FW_BlockInterface blk = FW_Parm.getCurrentBlockInterface();
             FW_SetOfBlocks sb = FW_Parm.getSetOfBlocksByName(resultsFolder); //FW_Parm.getCurrentSetOfBlocks();
-            FW_PalletInterface pl = FW_Parm.getCurrentPallet();
             if (blk == null) {
                 FW_Utils.warning("Select model window please");
                 return;
@@ -193,63 +207,14 @@ public class FW_MUTATOR extends JDialog {
                 FW_Utils.warning(resultsFolder + " models folder not found");
                 return;
             }
-            ////////////////////////////////////
-            // list of blocks to inject subtrees to processing blocks
-            java.util.List<FW_BlockInterface> treeinjection_blocks = new java.util.ArrayList<FW_BlockInterface>();
-            if (treeinjection_probability > 0.000001) {
-                FW_SetOfBlocks selected = FW_Parm.getSetOfBlocksByName(treeinjectionFolder);
-                if (selected == null) {
-                    FW_Utils.warning(treeinjectionFolder + " injection folder not found");
-                    return;
-                }
-                treeinjection_blocks = selected.getBlocksList();
-            }
-            ////////////////////////////////////         
-            java.util.List<FW_BlockInterface> injection_blocks = new java.util.ArrayList<FW_BlockInterface>();
-            if (injection_probability > 0.000001) {
-                FW_SetOfBlocks selected = FW_Parm.getSetOfBlocksByName(injectionFolder);
-                if (selected == null) {
-                    FW_Utils.warning(injectionFolder + " models folder not found");
-                    return;
-                }
-                injection_blocks = selected.getBlocksList();
-            }
-            ///////////////////////////////////
-
             FW_BlockInterface block = blk.copy();
-            sb.addBlock(block);
+            //sb.addBlock(block);
             for (int i = 0; i < nnmutants; i++) {
                 block = blk.copy();
-                ////////////////////////////////////
-                // injections of subtrees to processing block tree
-                if (treeinjection_probability > 0.00001) {
-                    FW_Builder.randomSubtreeInjections(block, injection_terminal_nodes_only,
-                            treeinjection_probability, treeinjection_blocks,
-                            new FW_TREE_DEPTH(treeinjection_min_depth, true));
-                }
-                ////////////////////////////////////
-                if (injection_probability > 0.00001) {
-                    FW_Builder.randomInjections(block, injection_terminal_nodes_only,
-                            injection_probability, injection_blocks);
-                }
-                ///////////////////////////////////  
-                for (int j = 0; j < nMutations; j++) {
-                    if (mutateProbub > FW_Rand.rand01()) {
-                        block.mutate();
-                    }
-                }
-                for (int j = 0; j < nStrMmutations; j++) {
-                    if (mutateProbub > FW_Rand.rand01()) {
-                        block.mutateLarge();
-                    }
-                }
-                for (int j = 0; j < nClrMutations; j++) {
-                    if (mutateProbub > FW_Rand.rand01() && (pl != null)) {
-                        block.mutatePallet(pl);
-                    }
-                }
-
-                sb.addBlock(block);
+                java.util.List<FW_BlockInterface> lls = FW_Parm.getCurrentBuilder().destructor(block, startProbub, minDepts, maxDepts, trimProbab);
+                for (FW_BlockInterface b:lls) {
+                   sb.addBlock(b);
+                } 
             }
             sb.updateView();
 
@@ -257,33 +222,11 @@ public class FW_MUTATOR extends JDialog {
             //FW_BlockInterface blk = FW_Parm.getCurrentBlockInterface();
             FW_SetOfBlocks sb = FW_Parm.getSetOfBlocksByName(resultsFolder);
             FW_SetOfBlocksFrame csb = (FW_SetOfBlocksFrame) FW_Parm.getCurrentSetOfBlocks();
-            FW_PalletInterface pl = FW_Parm.getCurrentPallet();
             if (sb == null || csb == null) {
                 FW_Utils.warning(resultsFolder + "results folder or current selected folder not found");
                 return;
             }
-            ////////////////////////////////////
-            // list of blocks to  blocks to processing blocks
-            java.util.List<FW_BlockInterface> injection_blocks = new java.util.ArrayList<FW_BlockInterface>();
-            if (injection_probability > 0.000001) {
-                FW_SetOfBlocks selected = FW_Parm.getSetOfBlocksByName(injectionFolder);
-                if (selected == null) {
-                    FW_Utils.warning(injectionFolder + " injection folder not found");
-                    return;
-                }
-                injection_blocks = selected.getBlocksList();
-            }
-            ////////////////////////////////////
-            // list of blocks to inject subtrees to processing blocks
-            java.util.List<FW_BlockInterface> treeinjection_blocks = new java.util.ArrayList<FW_BlockInterface>();
-            if (treeinjection_probability > 0.000001) {
-                FW_SetOfBlocks selected = FW_Parm.getSetOfBlocksByName(treeinjectionFolder);
-                if (selected == null) {
-                    FW_Utils.warning(treeinjectionFolder + " injection folder not found");
-                    return;
-                }
-                treeinjection_blocks = selected.getBlocksList();
-            }
+            
             ///////////////////////////////////
             // list of blocks of curent selected folder  to get for further mutations
             FW_BlockInterface block = null;
@@ -319,46 +262,11 @@ public class FW_MUTATOR extends JDialog {
                         return;
                     }
                 }
-                ////////////////////////////////////
-                // substitute root node in processing block tree
-                if (injection_root == 1) {
-                    FW_BlockInterface blk = FW_Parm.getCurrentBlockInterface();
-                    if (blk == null) {
-                        FW_Utils.warning("Model window not selected");
-                        return;
-                    }
-                    block = FW_Builder.rootInjection(blk, block);
-                }
-                ////////////////////////////////////
-                // injections of subtrees to processing block tree
-                if (treeinjection_probability > 0.00001) {
-                    FW_Builder.randomSubtreeInjections(block, injection_terminal_nodes_only,
-                            treeinjection_probability, treeinjection_blocks,
-                            new FW_TREE_DEPTH(treeinjection_min_depth, true));
-                }
-                ////////////////////////////////////
-                // injections of individual blocks to processing block tree
-                if (injection_probability > 0.00001) {
-                    FW_Builder.randomInjections(block, injection_terminal_nodes_only,
-                            injection_probability, injection_blocks);
-                }
-                /////////////////////////////////// 
-                // mutations of processing block tree
-                for (int j = 0; j < nMutations; j++) {
-                    if (mutateProbub > FW_Rand.rand01()) {
-                        block.mutate();
-                    }
-                }
-                for (int j = 0; j < nStrMmutations; j++) {
-                    if (mutateProbub > FW_Rand.rand01()) {
-                        block.mutateLarge();
-                    }
-                }
-                for (int j = 0; j < nClrMutations; j++) {
-                    if (mutateProbub > FW_Rand.rand01() && (pl != null)) {
-                        block.mutatePallet(pl);
-                    }
-                }
+                FW_BlockInterface tree = block.copy();
+                java.util.List<FW_BlockInterface> lls = FW_Parm.getCurrentBuilder().destructor(tree, startProbub, minDepts, maxDepts, trimProbab);
+                for (FW_BlockInterface b:lls) {
+                   sb.addBlock(b);
+                } 
                 /////////////////////////////////////
                 sb.addBlock(block);
             }
@@ -374,11 +282,11 @@ public class FW_MUTATOR extends JDialog {
     }
 }
 
-class FW_MUTATOR_jOK_actionAdapter implements java.awt.event.ActionListener {
+class FW_DESTRUCTOR_jOK_actionAdapter implements java.awt.event.ActionListener {
 
-    FW_MUTATOR adaptee;
+    FW_DESTRUCTOR adaptee;
 
-    FW_MUTATOR_jOK_actionAdapter(FW_MUTATOR adaptee) {
+    FW_DESTRUCTOR_jOK_actionAdapter(FW_DESTRUCTOR adaptee) {
         this.adaptee = adaptee;
     }
 
@@ -387,11 +295,11 @@ class FW_MUTATOR_jOK_actionAdapter implements java.awt.event.ActionListener {
     }
 }
 
-class FW_MUTATOR_jCancel_actionAdapter implements java.awt.event.ActionListener {
+class FW_DESTRUCTOR_jCancel_actionAdapter implements java.awt.event.ActionListener {
 
-    FW_MUTATOR adaptee;
+    FW_DESTRUCTOR adaptee;
 
-    FW_MUTATOR_jCancel_actionAdapter(FW_MUTATOR adaptee) {
+    FW_DESTRUCTOR_jCancel_actionAdapter(FW_DESTRUCTOR adaptee) {
         this.adaptee = adaptee;
     }
 
@@ -399,3 +307,4 @@ class FW_MUTATOR_jCancel_actionAdapter implements java.awt.event.ActionListener 
         adaptee.jCancel_actionPerformed(e);
     }
 }
+

@@ -130,6 +130,10 @@ public class mainWindow extends JFrame {
     
     jMutator.setText("Mutation Process");
     jMutator.addActionListener(new mainWindow_jMutator_actionAdapter(this));
+    
+    jDESTRUCTOR.setText("Destruction Process");
+    jDESTRUCTOR.addActionListener(new mainWindow_jDESTRUCTOR_actionAdapter(this));
+    
     jCollage.setText("Collage");
     jCollage.addActionListener(new mainWindow_jCollage_actionAdapter(this));
     
@@ -222,6 +226,8 @@ public class mainWindow extends JFrame {
     jMenu5.add(jOptions);
     jMenu5.add(jDeleteAllBlocks);
     jMenu5.add( jMutator);
+    jMenu5.add( jDESTRUCTOR);
+    
     jMenu5.add( jCollage);
         jMenu5.addSeparator();
         jMenu5.add(jMenuStartMacro);
@@ -304,6 +310,7 @@ public class mainWindow extends JFrame {
   JMenuItem jOptions = new JMenuItem();
   JMenuItem jDeleteAllBlocks = new JMenuItem();
   JMenuItem jMutator = new JMenuItem();
+  JMenuItem jDESTRUCTOR = new JMenuItem();
   JMenuItem jCollage = new JMenuItem();
   JCheckBox jMacro = new JCheckBox();
   JComboBox jMacroType = new JComboBox();
@@ -423,6 +430,17 @@ public class mainWindow extends JFrame {
   
   void jMutator_actionPerformed(ActionEvent e) {
     FW_MUTATOR dlg = new FW_MUTATOR(this);
+       Dimension dlgSize = dlg.getPreferredSize();
+       Dimension frmSize = getSize();
+       Point loc = getLocation();
+       dlg.setLocation((frmSize.width - dlgSize.width) / 2 + loc.x, (frmSize.height - dlgSize.height) / 2 + loc.y);
+       dlg.setModal(true);
+       dlg.pack();
+       dlg.show();
+  }
+  
+  void jDESTRUCTOR_actionPerformed(ActionEvent e) {
+    FW_DESTRUCTOR dlg = new FW_DESTRUCTOR(this);
        Dimension dlgSize = dlg.getPreferredSize();
        Dimension frmSize = getSize();
        Point loc = getLocation();
@@ -862,6 +880,19 @@ class mainWindow_jMutator_actionAdapter implements java.awt.event.ActionListener
     adaptee.jMutator_actionPerformed(e);
   }
 }
+
+class mainWindow_jDESTRUCTOR_actionAdapter implements java.awt.event.ActionListener {
+  mainWindow adaptee;
+
+  mainWindow_jDESTRUCTOR_actionAdapter(mainWindow adaptee) {
+    this.adaptee = adaptee;
+  }
+  public void actionPerformed(ActionEvent e) {
+    adaptee.jDESTRUCTOR_actionPerformed(e);
+  }
+}
+
+
 
 class mainWindow_jCollage_actionAdapter implements java.awt.event.ActionListener {
   mainWindow adaptee;
