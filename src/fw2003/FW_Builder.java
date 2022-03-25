@@ -413,11 +413,12 @@ public class FW_Builder {
                             for (int j = 0; j < nn_sons; j++) {
                                 block.setSon(j, block_old.getSon(j));
                             }
+                            block_old = block;
                         }
                     }
-                    if (block != null) {
-                        block_old = block;
-                    }
+                //    if (block != null) {
+                //        block_old = block;
+                //    }
                 }
             }
         }

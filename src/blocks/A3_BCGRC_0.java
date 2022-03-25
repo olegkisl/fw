@@ -54,6 +54,7 @@ public class A3_BCGRC_0 extends Block_Prototype_Fxy {
         int res  = (hash+j);
         if(res<0) res=-res;
         res = (res+1) % divider;
+        if(res >=uuu.length) res=uuu.length-1;
         return uuu[res];
     }
 

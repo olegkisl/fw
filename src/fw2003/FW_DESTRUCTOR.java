@@ -268,7 +268,7 @@ public class FW_DESTRUCTOR extends JDialog {
                    sb.addBlock(b);
                 } 
                 /////////////////////////////////////
-                sb.addBlock(block);
+                //sb.addBlock(block);
             }
             sb.updateView();
         }

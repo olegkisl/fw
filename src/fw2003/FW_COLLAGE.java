@@ -88,7 +88,7 @@ public class  FW_COLLAGE extends JDialog {
         jPanel2.add(jCancel, null);
         jPanel1.add(jLabel, null);
         jPanel1.add(jEndwith, null);
-        jPanel1.add(jLabel, null);
+        jPanel1.add(jLabel1, null);
         jPanel1.add(jxmax, null);
         jPanel1.add(jLabel2, null);
         jPanel1.add(jymax, null);
