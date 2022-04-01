@@ -93,7 +93,7 @@ public class FW_MUTATOR extends JDialog {
         jLabel7.setText("Mutations: N color mutations");
         jLabel7a.setText("Node_Injections: Folder Name");
         jLabel8.setText("Node_Injections: Probabilituy of node injection from Injection Folder");
-        jLabel9.setText("Node_Injections: 0-injection to all nodes, 1-injection to terminal nodes");
+        jLabel9.setText("Node_and_SubTree_Injections: 0-injection to all nodes, 1-injection to terminal nodes");
         jLabel10.setText("ROOT_SUBSTITUTION: 0-none 1- selected object root node to processed object root node");
         jLabel11.setText("SubTree_Injections: Folder Name");
         jLabel12.setText("SubTree_Injections: Probabilituy of injection from SubTreeInjections Folder");
