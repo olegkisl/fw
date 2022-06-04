@@ -246,9 +246,15 @@ public class FW_ImagePanel extends JPanel implements MouseListener,
         xend += dx;
         yend += dy;
     }
-
+    
+    private void zoom(double zm) {
+        xend = (int)(x+(xend-x)*zm);
+        yend = (int)(y+(yend-y)*zm);
+    }
+    
     public void keyPressed(KeyEvent evt) {
         int keyCode = evt.getKeyCode();
+        double zm=0.97;
         int d = 1;
         boolean alt = false;
         if (evt.isAltDown()) {
@@ -265,6 +271,10 @@ public class FW_ImagePanel extends JPanel implements MouseListener,
             add(0, -d, alt);
         } else if (keyCode == KeyEvent.VK_DOWN) {
             add(0, d, alt);
+        }else if (keyCode == KeyEvent.VK_S) {
+            zoom(zm);
+        }else if (keyCode == KeyEvent.VK_L) {
+            zoom(1.0/zm);;
         }
     }
 

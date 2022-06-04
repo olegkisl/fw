@@ -311,6 +311,14 @@ public class FW_Builder {
             for (int j = 0; j < nn_sons; j++) {
                 from_tree.setSon(j, to_tree.getSon(j));
             }
+            //// assign transformation from old root block ////
+            Class cc=Block_Prototype_Fxy.class;
+            if(cc.isInstance(from_tree)&&cc.isInstance(to_tree) ){
+               PaintTransformation p = ((Block_Prototype_Fxy)to_tree).paintTransformation;
+               if (p != null)
+                  ((Block_Prototype_Fxy)from_tree).paintTransformation = p.copy();
+            }
+            ///////////
         }
         return from_tree;
     }

@@ -5,6 +5,10 @@
 
 package fw2003;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -27,6 +31,25 @@ public class PaintTransformation implements  Serializable {
         this.m12 = m12;
         this.maxX = maxX;
         this.maxY = maxY;
+    }
+    
+    public PaintTransformation copy() {
+        Object cop = null;
+        try {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bout);
+            out.writeObject(this);
+            out.close();
+
+            ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+            ObjectInputStream in = new ObjectInputStream(bin);
+            cop = in.readObject();
+            in.close();
+            return (PaintTransformation) cop;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
 
