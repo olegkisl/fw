@@ -296,8 +296,8 @@ public class FW_ImageContext {
         double dyy =pt.maxY / (double)maxY;
 
         m00 = pt.m00*dxx;
-        m10 = pt.m10*dyy;
-        m01 = pt.m01*dxx;
+        m10 = pt.m10*dxx;   // dyy;
+        m01 = pt.m01*dyy;   ///dxx;
         m11 = pt.m11*dyy;
         m02 = pt.m02;
         m12 = pt.m12;

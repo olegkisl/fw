@@ -18,15 +18,13 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.event.*;
-import java.util.*;
-import java.sql.*;
+
+
 
 
 /**
- * <p>Title: IKnowManager</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: Genesys</p>
  * @author not attributable
  * @version 7.0
  */

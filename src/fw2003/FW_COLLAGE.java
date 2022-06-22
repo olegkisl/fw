@@ -1,4 +1,3 @@
-
 package fw2003;
 
 import javax.swing.*;
@@ -17,19 +16,10 @@ import java.util.Iterator;
  * @author Oleg Kislyuk
  * @version 3.0
  */
-public class  FW_COLLAGE extends JDialog {
+public class FW_COLLAGE extends JDialog {
+
     static String endwith = "";
-    static int xmax = 400; // image size of collage element
-    static int ymax = 500;
-    static int xinit = 1;  // initial delta
-    static int yinit = 1;
-    static int xdelta = 401; //  add to current delta
-    static int ydelta = 501;
-    static int xnn = 3;   // number of images in a row
-    //static int ynn= 4;    // number of images in column
-    
-    
-   
+    static String xmax = ""; // coordinates and size of collage elements
     JPanel jPanel1 = new JPanel();
     JPanel jPanel2 = new JPanel();
     JButton jOK = new JButton();
@@ -37,27 +27,30 @@ public class  FW_COLLAGE extends JDialog {
     GridLayout gridLayout1 = new GridLayout();
     JLabel jLabel = new JLabel("model name postfix");
     JTextField jEndwith = new JTextField();
-   
-    JLabel jLabel1 = new JLabel("xmax");
+    JLabel jLabel1 = new JLabel("x y sizex sizey repeted coordinates");
     JTextField jxmax = new JTextField();
-    JLabel jLabel2 = new JLabel("ymax");
-    JTextField jymax = new JTextField();
-    
-    JLabel jLabel3 = new JLabel("xinit");
-    JTextField jxinit = new JTextField();
-    JLabel jLabel4 = new JLabel("yinit");
-    JTextField jyinit = new JTextField();
-    
-    JLabel jLabel5 = new JLabel("xdelta");
-    JTextField jxdelta = new JTextField();
-    JLabel jLabel6 = new JLabel("ydelta");
-    JTextField jydelta = new JTextField();
-    
-    JLabel jLabel7 = new JLabel("NN x");
-    JTextField jxnn = new JTextField();
-    
 
-    public  FW_COLLAGE(Frame parent) {
+    public static int[] parser(String str) {
+        int[] result = new int[0];
+        try {
+            String[] arr = str.split("\\s+", 0);
+            if (arr.length == 0) {
+                return result;
+            }
+            result = new int[arr.length];
+            for (int i = 0; i < arr.length; i++) {
+                System.out.println(arr[i]);
+                result[i] = Integer.parseInt(arr[i]);
+                System.out.println(result[i]);
+            }
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+            return new int[0];
+        }
+        return result;
+    }
+
+    public FW_COLLAGE(Frame parent) {
         super(parent);
         try {
             jbInit();
@@ -72,14 +65,14 @@ public class  FW_COLLAGE extends JDialog {
         jCancel.setText("Cancel");
         jCancel.addActionListener(new FW_COLLAGE_jCancel_actionAdapter(this));
         jPanel1.setLayout(gridLayout1);
-        gridLayout1.setColumns(2);
+        gridLayout1.setColumns(1);
         gridLayout1.setHgap(2);
-        gridLayout1.setRows(8);
+        gridLayout1.setRows(4);
         gridLayout1.setVgap(2);
         jPanel1.setBorder(BorderFactory.createRaisedBevelBorder());
         //jLabel1.setText("model name postfix");
         //jEndwith.setText("");
-        
+
         ///////////////
 
         this.getContentPane().add(jPanel1, BorderLayout.CENTER);
@@ -90,21 +83,7 @@ public class  FW_COLLAGE extends JDialog {
         jPanel1.add(jEndwith, null);
         jPanel1.add(jLabel1, null);
         jPanel1.add(jxmax, null);
-        jPanel1.add(jLabel2, null);
-        jPanel1.add(jymax, null);
-        
-        jPanel1.add(jLabel3, null);
-        jPanel1.add(jxinit, null);
-        jPanel1.add(jLabel4, null);
-        jPanel1.add(jyinit, null);
-        
-        jPanel1.add(jLabel5, null);
-        jPanel1.add(jxdelta, null);
-        jPanel1.add(jLabel6, null);
-        jPanel1.add(jydelta, null);
-        
-        jPanel1.add(jLabel7, null);
-        jPanel1.add(jxnn, null);
+
 
         initParms();
     }
@@ -112,82 +91,84 @@ public class  FW_COLLAGE extends JDialog {
     void initParms() {
         jEndwith.setText("" + endwith);
         jxmax.setText("" + xmax);
-        jymax.setText("" + ymax);
-        jxinit.setText("" + xinit);
-        jyinit.setText("" + yinit);
-        jxdelta.setText("" + xdelta);
-        jydelta.setText("" + ydelta);
-        jxnn.setText("" + xnn);
-
     }
     
-    
-     void jOK_actionPerformed(ActionEvent e) {
-          endwith = jEndwith.getText();
-          xmax = Integer.parseInt(jxmax.getText());
-          ymax = Integer.parseInt(jymax.getText());
-          
-          xinit = Integer.parseInt(jxinit.getText());
-          yinit = Integer.parseInt(jyinit.getText());
-          
-          xdelta = Integer.parseInt(jxdelta.getText());
-          ydelta = Integer.parseInt(jydelta.getText());
-          xnn = Integer.parseInt(jxnn.getText());
-          
-        
+    void saveParms() {
+       endwith = jEndwith.getText();
+       xmax = (jxmax.getText());
+    }
 
-            try {
-                //System.out.println("1>>>>" );
-                FW_SetOfBlocks sb = FW_Parm.getCurrentSetOfBlocks();
-                if (sb == null) {
-                    return;
-                }
-                //System.out.println("2>>>>" );
-                FW_ImageFrame f = (FW_ImageFrame) FW_Parm.getCurrentImageFrame();
-                if (f == null) {
-                    return;
-                }
-                //System.out.println("3>>>>" );
-
-                java.util.List ls = sb.getBlocksList();
-                if(ls.isEmpty())return;
-                //System.out.println("4>>>>" );
-                Collections.sort(ls, new CompareBlocks()); 
-                int n_image=0;
-                for (Iterator iter = ls.iterator(); iter.hasNext();) {
-                    FW_BlockInterface b = (FW_BlockInterface) iter.next();
-                    if(!b.getName().endsWith(endwith)) continue;
-                    FW_BlockInterface bc = b.copy();
-                    new FW_BlockFrame(FW_Parm.getBlockDesktop(), bc);
-                    System.out.println(">>" + b.getName());
-                    //f.paint_synchronized();
-                    int dx =xinit+xdelta*(n_image % xnn);
-                    int dy =yinit+ydelta*(n_image / xnn);
-                    f.paint_collage(xmax, ymax, dx, dy);
-                    //System.out.println("END>>>>" + b.getName());
-                    n_image++;
-                }
-            } catch (Exception ee) {
-                System.out.println(ee);
-                ee.printStackTrace(System.out);
+    void jOK_actionPerformed(ActionEvent e) {
+        saveParms();
+        try {
+            //System.out.println("1>>>>" );
+            FW_SetOfBlocks sb = FW_Parm.getCurrentSetOfBlocks();
+            if (sb == null) {
+                return;
             }
+            //System.out.println("2>>>>" );
+            FW_ImageFrame f = (FW_ImageFrame) FW_Parm.getCurrentImageFrame();
+            if (f == null) {
+                return;
+            }
+            //System.out.println("3>>>>" );
+
+            int[] rectangles = parser(xmax);
+            if (rectangles.length < 4) {
+                return;
+            }
+
+            java.util.List ls = sb.getBlocksList();
+            if (ls.isEmpty()) {
+                return;
+            }
+            //System.out.println("4>>>>" );
+            Collections.sort(ls, new CompareBlocks());
+            int n_image = 0;
+            for (Iterator iter = ls.iterator(); iter.hasNext();) {
+                FW_BlockInterface b = (FW_BlockInterface) iter.next();
+                if (!b.getName().endsWith(endwith)) {
+                    continue;
+                }
+                FW_BlockInterface bc = b.copy();
+                new FW_BlockFrame(FW_Parm.getBlockDesktop(), bc);
+                // System.out.println(">>" + b.getName());
+                //f.paint_synchronized();
+                int dx = rectangles[n_image];
+                int dy = rectangles[n_image + 1];
+                f.paint_collage(
+                        rectangles[n_image * 4 + 2],
+                        rectangles[n_image * 4 + 3],
+                        rectangles[n_image * 4],
+                        rectangles[n_image * 4 + 1]);
+                //System.out.println("END>>>>" + b.getName());
+                n_image++;
+                if (rectangles.length < n_image * 4 + 4) {
+                    return;
+                }
+            }
+        } catch (Exception ee) {
+            System.out.println(ee);
+            ee.printStackTrace(System.out);
+        }
         dispose();
         return;
     }
-     
 
     void jCancel_actionPerformed(ActionEvent e) {
+        saveParms();
         dispose();
     }
 }
 
 class CompareBlocks implements Comparator {
+
     public int compare(Object o1, Object o2) {
-        FW_BlockInterface b1 = (FW_BlockInterface)o1;
-        FW_BlockInterface b2 = (FW_BlockInterface)o2;
+        FW_BlockInterface b1 = (FW_BlockInterface) o1;
+        FW_BlockInterface b2 = (FW_BlockInterface) o2;
         String s1 = b1.getName();
         String s2 = b2.getName();
-        return  s1.compareTo(s2);
+        return s1.compareTo(s2);
     }
 }
 

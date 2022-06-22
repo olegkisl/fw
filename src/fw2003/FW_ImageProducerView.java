@@ -25,6 +25,9 @@ public class FW_ImageProducerView extends JFrame {
                 info=("    image X/Y ratio = "+ pt.maxX+"/"+pt.maxY);
             }
         }
+        int depth = FW_Builder.treeDepth(p);
+        int nulls = FW_Builder.treeNullNodesNN(p);
+        info+=(" |h="+depth+"|nl="+nulls+"|");
         this.ip = p;
         try {
             treeInit();
@@ -116,6 +119,10 @@ public class FW_ImageProducerView extends JFrame {
                     nnNodes++;
                     createNodes(category, p);
                 }
+            } else{
+                category = new DefaultMutableTreeNode(
+                            "-NULL-");
+                top.add(category);
             }
         }
     }

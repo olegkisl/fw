@@ -286,6 +286,33 @@ public class FW_Builder {
 
     /////// Utils
     
+    public static int treeDepth(FW_BlockInterface tree) {
+        if (tree == null) {
+            return 0;
+        }
+        int max_depth = 1;
+        for (int i = 0; i < tree.getNumberOfSons(); i++) {
+            FW_BlockInterface bb = tree.getSon(i);
+            int h = treeDepth(bb) + 1;
+            if (h > max_depth) {
+                max_depth = h;
+            }
+        }
+        return max_depth;
+    }
+
+    public static int treeNullNodesNN(FW_BlockInterface tree) {
+        if (tree == null) {
+            return 1;
+        }
+        int nn = 0;
+        for (int i = 0; i < tree.getNumberOfSons(); i++) {
+            FW_BlockInterface bb = tree.getSon(i);
+            nn += treeNullNodesNN(bb);
+        }
+        return nn;
+    }
+    
     // Atom injections
     public static final int son_max = 5; // max sons in injected node
     
