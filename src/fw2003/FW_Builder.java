@@ -465,6 +465,45 @@ public class FW_Builder {
 
     }
     
+    /////////// TREE REPAIR: Fill all null pointer in tree with terminal node
+    public static void treeRepair(FW_BlockInterface tree, List<FW_BlockInterface> ls) {
+
+        List<FW_BlockInterface> terminallist = new ArrayList<FW_BlockInterface>();
+
+        for (FW_BlockInterface b : ls) {
+            FW_BlockInterface b_copy = b.copy();
+            int nn = b_copy.getNumberOfSons();
+            if (nn == 0) {
+                terminallist.add(b_copy);
+            }
+        }
+        //NUll pointers Nodes Injections:
+        treeRepair_1(terminallist,
+                tree);
+    }
+
+    public static void treeRepair_1(List<FW_BlockInterface> ls, FW_BlockInterface parent) {
+        if (parent == null) {
+            return;
+        }
+        for (int i = 0; i < parent.getNumberOfSons(); i++) {
+            FW_BlockInterface block = parent.getSon(i);
+            if (block != null) {
+                treeRepair_1(ls, block);
+            } else {
+                int size = FW_Rand.rand(ls.size());
+                if (size > 0) {
+                    int node = FW_Rand.rand(size); 
+                    block = ls.get(node).copy(); // get terminal node
+                    boolean comparable = classCompartable(parent, block, i);
+                    if (comparable) {
+                        parent.setSon(i, block);
+                    }
+                }
+            }
+        }
+    }
+
     ////////////  TREE DESTRUCTOR//////////////////////
     
     public java.util.List<FW_BlockInterface> destructor(FW_BlockInterface tree, double start_probub, int depthMin, int depthMax, double trim_probub) {

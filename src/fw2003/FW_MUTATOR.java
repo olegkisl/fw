@@ -30,6 +30,9 @@ public class FW_MUTATOR extends JDialog {
     static double treeinjection_probability = 0.0;
     static int treeinjection_min_depth = -1;
     
+    static int tree_injection_terminal_nodes_only = 0;
+    static int tree_repair = 0;
+    
     JPanel jPanel1 = new JPanel();
     JPanel jPanel2 = new JPanel();
     JButton jOK = new JButton();
@@ -53,8 +56,12 @@ public class FW_MUTATOR extends JDialog {
     JTextField jInjectionFolder = new JTextField();
     JLabel jLabel8 = new JLabel();
     JTextField jinjection_probability = new JTextField();
+    JLabel jLabel8a = new JLabel();
+    JTextField jtree_repair = new JTextField();
     JLabel jLabel9 = new JLabel();
     JTextField jinjection_terminal_nodes_only = new JTextField();
+    JLabel jLabel9a = new JLabel();
+    JTextField jtree_injection_terminal_nodes_only = new JTextField();
     JLabel jLabel10 = new JLabel();
     JTextField jinjection_root = new JTextField();
     JLabel jLabel11 = new JLabel();
@@ -81,7 +88,7 @@ public class FW_MUTATOR extends JDialog {
         jPanel1.setLayout(gridLayout1);
         gridLayout1.setColumns(2);
         gridLayout1.setHgap(2);
-        gridLayout1.setRows(14);
+        gridLayout1.setRows(16);
         gridLayout1.setVgap(2);
         jPanel1.setBorder(BorderFactory.createRaisedBevelBorder());
         jLabel1.setText("Result Models Folder Name");
@@ -91,13 +98,18 @@ public class FW_MUTATOR extends JDialog {
         jLabel5.setText("Mutations: N parameters mutations");
         jLabel6.setText("Mutations: N structural mutations");
         jLabel7.setText("Mutations: N color mutations");
+        
         jLabel7a.setText("Node_Injections: Folder Name");
         jLabel8.setText("Node_Injections: Probabilituy of node injection from Injection Folder");
-        jLabel9.setText("Node_and_SubTree_Injections: 0-injection to all nodes, 1-injection to terminal nodes");
+        jLabel8a.setText("Node_Injections: Tree Repair: attach terminal nodes to all null pointers"); 
+        jLabel9.setText("Node_Injections: 0-injection to all nodes, 1-injection to terminal nodes");
+       
         jLabel10.setText("ROOT_SUBSTITUTION: 0-none 1- selected object root node to processed object root node");
+        
         jLabel11.setText("SubTree_Injections: Folder Name");
         jLabel12.setText("SubTree_Injections: Probabilituy of injection from SubTreeInjections Folder");
         jLabel13.setText("SubTree_Injections: Min depth of the node to inject subtree");
+         jLabel9a.setText("SubTree_Injections: 0-injection to all nodes, 1-injection to terminal nodes");
         ///////////////
 
 
@@ -125,6 +137,8 @@ public class FW_MUTATOR extends JDialog {
         jPanel1.add(jInjectionFolder, null);
         jPanel1.add(jLabel8, null);
         jPanel1.add(jinjection_probability, null);
+        jPanel1.add(jLabel8a, null);
+        jPanel1.add(jtree_repair, null);
         jPanel1.add(jLabel9, null);
         jPanel1.add(jinjection_terminal_nodes_only, null);
         
@@ -134,6 +148,8 @@ public class FW_MUTATOR extends JDialog {
         jPanel1.add(jtreeinjection_probability, null);
         jPanel1.add(jLabel13, null);
         jPanel1.add(jtreeinjection_min_depth, null);
+        jPanel1.add(jLabel9a, null);
+        jPanel1.add(jtree_injection_terminal_nodes_only, null);
         
         jPanel1.add(jLabel10, null);
         jPanel1.add(jinjection_root, null);
@@ -153,6 +169,8 @@ public class FW_MUTATOR extends JDialog {
         jInjectionFolder.setText("" + injectionFolder);
         jinjection_probability.setText("" + injection_probability);
         jinjection_terminal_nodes_only.setText("" + injection_terminal_nodes_only);
+        jtree_injection_terminal_nodes_only.setText("" + tree_injection_terminal_nodes_only);
+        jtree_repair.setText("" + tree_repair);
         jinjection_root.setText("" + injection_root);
 
         jtreeinjectionFolder.setText("" + treeinjectionFolder);
@@ -170,7 +188,9 @@ public class FW_MUTATOR extends JDialog {
         nClrMutations = Integer.parseInt(jColorlNmutations.getText());
         injection_probability = Double.parseDouble(jinjection_probability.getText());
         injection_terminal_nodes_only = Integer.parseInt(jinjection_terminal_nodes_only.getText());
+        tree_injection_terminal_nodes_only = Integer.parseInt(jtree_injection_terminal_nodes_only.getText());
         injectionFolder = jInjectionFolder.getText();
+        tree_repair=Integer.parseInt(jtree_repair.getText());
         injection_root = Integer.parseInt(jinjection_root.getText());
 
         treeinjectionFolder = jtreeinjectionFolder.getText();;
@@ -223,7 +243,7 @@ public class FW_MUTATOR extends JDialog {
                 ////////////////////////////////////
                 // injections of subtrees to processing block tree
                 if (treeinjection_probability > 0.00001) {
-                    FW_Builder.randomSubtreeInjections(block, injection_terminal_nodes_only,
+                    FW_Builder.randomSubtreeInjections(block, tree_injection_terminal_nodes_only,
                             treeinjection_probability, treeinjection_blocks,
                             new FW_TREE_DEPTH(treeinjection_min_depth, true));
                 }
@@ -231,6 +251,10 @@ public class FW_MUTATOR extends JDialog {
                 if (injection_probability > 0.00001) {
                     FW_Builder.randomInjections(block, injection_terminal_nodes_only,
                             injection_probability, injection_blocks);
+                }
+                ///////////////////////////////////
+                if (tree_repair > 0) {
+                    FW_Builder.treeRepair(block,injection_blocks);
                 }
                 ///////////////////////////////////  
                 for (int j = 0; j < nMutations; j++) {
@@ -332,7 +356,7 @@ public class FW_MUTATOR extends JDialog {
                 ////////////////////////////////////
                 // injections of subtrees to processing block tree
                 if (treeinjection_probability > 0.00001) {
-                    FW_Builder.randomSubtreeInjections(block, injection_terminal_nodes_only,
+                    FW_Builder.randomSubtreeInjections(block, tree_injection_terminal_nodes_only,
                             treeinjection_probability, treeinjection_blocks,
                             new FW_TREE_DEPTH(treeinjection_min_depth, true));
                 }
@@ -343,6 +367,10 @@ public class FW_MUTATOR extends JDialog {
                             injection_probability, injection_blocks);
                 }
                 /////////////////////////////////// 
+                  if (tree_repair > 0) {
+                    FW_Builder.treeRepair(block,injection_blocks);
+                }
+                ///////////////////////////////////  
                 // mutations of processing block tree
                 for (int j = 0; j < nMutations; j++) {
                     if (mutateProbub > FW_Rand.rand01()) {
